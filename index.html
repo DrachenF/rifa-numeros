@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rifa</title>
+  <title>Rifa Álbum Mundial 2026</title>
   <style>
     * {
       box-sizing: border-box;
@@ -24,14 +24,197 @@
       justify-content: center;
       align-items: flex-start;
       padding: 10px;
+      color: #111;
+    }
+
+    .rifa {
+      width: min(100%, 760px);
+      min-height: calc(100svh - 20px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .encabezado {
+      text-align: center;
+      padding: 2px 4px 0;
+    }
+
+    .titulo {
+      margin: 0;
+      font-size: clamp(20px, 5.7vw, 34px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .detalles {
+      margin: 3px 0 0;
+      font-size: clamp(13px, 3.5vw, 20px);
+      font-weight: 600;
+      line-height: 1.2;
+      color: #333;
+    }
+
+    .regla {
+      margin: -2px auto 0;
+      max-width: 620px;
+      text-align: center;
+      font-size: clamp(11px, 3vw, 15px);
+      line-height: 1.2;
+      color: #555;
     }
 
     .grid {
       width: 100%;
-      max-width: 760px;
       display: grid;
       grid-template-columns: repeat(10, 1fr);
       gap: 6px;
+    }
+
+    .leyenda {
+      margin: -1px 0 0;
+      text-align: center;
+      font-size: clamp(11px, 3vw, 15px);
+      font-weight: 600;
+      line-height: 1.15;
+      color: #555;
+    }
+
+    .leyenda-x {
+      color: #d00000;
+      font-weight: 900;
+    }
+
+    .ticket-editor {
+      width: min(100%, 560px);
+      margin: 6px auto 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    .ticket-campos {
+      display: grid;
+      grid-template-columns: 0.52fr 1fr;
+      gap: 8px;
+    }
+
+    .campo {
+      display: grid;
+      gap: 4px;
+    }
+
+    .campo label {
+      font-size: clamp(10px, 2.7vw, 13px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: #444;
+      text-transform: lowercase;
+    }
+
+    .campo input {
+      width: 100%;
+      min-height: 36px;
+      border: 1.5px solid #1b1b1b;
+      border-radius: 10px;
+      background: #fff;
+      color: #111;
+      font: inherit;
+      font-size: clamp(14px, 3.7vw, 18px);
+      font-weight: 700;
+      outline: none;
+      padding: 8px 10px;
+    }
+
+    .campo input:focus {
+      border-color: #0f5132;
+      box-shadow: 0 0 0 2px rgba(15, 81, 50, 0.12);
+    }
+
+    .campo-numero input {
+      text-align: center;
+      letter-spacing: 0.08em;
+    }
+
+    .ticket {
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #111;
+      border-radius: 18px;
+      background:
+        linear-gradient(90deg, transparent 49.7%, rgba(15, 81, 50, 0.12) 49.7%, rgba(15, 81, 50, 0.12) 50.3%, transparent 50.3%),
+        radial-gradient(circle at center, transparent 0 28px, rgba(15, 81, 50, 0.12) 29px 30px, transparent 31px),
+        #fbfdfb;
+      padding: 14px 16px 16px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    }
+
+    .ticket::before,
+    .ticket::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 22px;
+      height: 44px;
+      background: #fff;
+      border: 2px solid #111;
+      transform: translateY(-50%);
+    }
+
+    .ticket::before {
+      left: -13px;
+      border-left: 0;
+      border-radius: 0 24px 24px 0;
+    }
+
+    .ticket::after {
+      right: -13px;
+      border-right: 0;
+      border-radius: 24px 0 0 24px;
+    }
+
+    .ticket-numero {
+      margin: 0;
+      font-size: clamp(26px, 8vw, 46px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .ticket-fecha {
+      margin: 6px 0 0;
+      font-size: clamp(13px, 3.7vw, 18px);
+      font-weight: 800;
+      line-height: 1.15;
+      color: #222;
+    }
+
+    .ticket-premio {
+      margin: 8px auto 0;
+      max-width: 430px;
+      font-size: clamp(12px, 3.2vw, 16px);
+      font-weight: 700;
+      line-height: 1.25;
+      color: #333;
+      text-transform: uppercase;
+    }
+
+    .ticket-nombre {
+      margin: 13px 0 0;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.35);
+      font-size: clamp(20px, 6vw, 34px);
+      font-weight: 900;
+      line-height: 1.05;
+      word-break: break-word;
+    }
+
+    .ticket-nombre.vacio {
+      color: #777;
+      font-weight: 700;
     }
 
     .numero {
@@ -41,7 +224,7 @@
       background: #fff;
       color: #111;
       border-radius: 8px;
-      font-size: clamp(14px, 4vw, 28px);
+      font-size: clamp(14px, 4vw, 30px);
       font-weight: 900;
       display: flex;
       align-items: center;
@@ -78,8 +261,37 @@
         padding: 6px;
       }
 
+      .rifa {
+        min-height: calc(100svh - 12px);
+        gap: 5px;
+      }
+
+      .encabezado {
+        padding-top: 0;
+      }
+
       .grid {
         gap: 3px;
+      }
+
+      .ticket-editor {
+        margin-top: 4px;
+        gap: 6px;
+      }
+
+      .ticket-campos {
+        gap: 6px;
+      }
+
+      .campo input {
+        min-height: 33px;
+        border-radius: 8px;
+        padding: 7px 8px;
+      }
+
+      .ticket {
+        border-radius: 15px;
+        padding: 11px 13px 13px;
       }
 
       .numero {
@@ -90,12 +302,48 @@
   </style>
 </head>
 <body>
-  <div id="grid" class="grid"></div>
+  <main class="rifa" aria-label="Rifa Álbum Mundial 2026">
+    <header class="encabezado">
+      <h1 class="titulo">Rifa Álbum Mundial 2026</h1>
+      <p class="detalles">Q30 el número · Sorteo 20 de junio</p>
+    </header>
+
+    <p class="regla">Gana el número que coincida con los últimos 2 dígitos de la Lotería Santa Lucía.</p>
+
+    <div id="grid" class="grid"></div>
+
+    <p class="leyenda"><span class="leyenda-x">X</span> = No disponible</p>
+
+    <section class="ticket-editor" aria-label="Crear ticket para captura">
+      <div class="ticket-campos">
+        <div class="campo campo-numero">
+          <label for="ticketNumeroInput">escribe un número 00-99</label>
+          <input id="ticketNumeroInput" type="text" inputmode="numeric" maxlength="2" placeholder="00" autocomplete="off" />
+        </div>
+
+        <div class="campo">
+          <label for="ticketNombreInput">nombre de la persona registrada</label>
+          <input id="ticketNombreInput" type="text" placeholder="Nombre" autocomplete="off" />
+        </div>
+      </div>
+
+      <article class="ticket" aria-label="Ticket para enviar por WhatsApp">
+        <p class="ticket-numero">Ticket #<span id="ticketNumero">--</span></p>
+        <p class="ticket-fecha">Sorteo 20 de junio</p>
+        <p class="ticket-premio">Premio: 1 álbum pasta dura + todas las estampas</p>
+        <p id="ticketNombre" class="ticket-nombre vacio">Nombre</p>
+      </article>
+    </section>
+  </main>
 
   <script>
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQG0F_k6A4jXMpE-TWWFHgyiHJKTgaVeHdvRNJP-Ge3zo-Df85W5RA4dgnDrtUYf8lZdiRYfibXglbT/pub?gid=76814313&single=true&output=csv";
 
     const grid = document.getElementById("grid");
+    const ticketNumeroInput = document.getElementById("ticketNumeroInput");
+    const ticketNombreInput = document.getElementById("ticketNombreInput");
+    const ticketNumero = document.getElementById("ticketNumero");
+    const ticketNombre = document.getElementById("ticketNombre");
     let noDisponibles = new Set();
 
     function formatoNumero(n) {
@@ -163,6 +411,19 @@
       return resultado;
     }
 
+    function actualizarTicket() {
+      const numeroLimpio = ticketNumeroInput.value.replace(/\D/g, "").slice(0, 2);
+      ticketNumeroInput.value = numeroLimpio;
+
+      const nombreLimpio = ticketNombreInput.value.trim();
+      ticketNumero.textContent = numeroLimpio ? formatoNumero(parseInt(numeroLimpio, 10)) : "--";
+      ticketNombre.textContent = nombreLimpio || "Nombre";
+      ticketNombre.classList.toggle("vacio", !nombreLimpio);
+    }
+
+    ticketNumeroInput.addEventListener("input", actualizarTicket);
+    ticketNombreInput.addEventListener("input", actualizarTicket);
+
     async function cargarDesdeGoogleSheet() {
       try {
         const separador = SHEET_CSV_URL.includes("?") ? "&" : "?";
@@ -178,6 +439,7 @@
       }
     }
 
+    actualizarTicket();
     crearCuadricula();
     cargarDesdeGoogleSheet();
   </script>
