@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rifa</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #ffffff;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px;
+    }
+
+    .grid {
+      width: 100%;
+      max-width: 760px;
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+    }
+
+    .numero {
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      border: 2px solid #111;
+      background: #fff;
+      color: #111;
+      border-radius: 8px;
+      font-size: clamp(14px, 4vw, 28px);
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .numero.no-disponible {
+      background: #f2f2f2;
+      color: #555;
+    }
+
+    .numero.no-disponible::after {
+      content: "×";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d00000;
+      font-size: clamp(36px, 10vw, 86px);
+      font-weight: 900;
+      line-height: 1;
+      pointer-events: none;
+      opacity: 0.95;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 6px;
+      }
+
+      .grid {
+        gap: 3px;
+      }
+
+      .numero {
+        border-width: 1.2px;
+        border-radius: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="grid" class="grid"></div>
+
+  <script>
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQG0F_k6A4jXMpE-TWWFHgyiHJKTgaVeHdvRNJP-Ge3zo-Df85W5RA4dgnDrtUYf8lZdiRYfibXglbT/pub?gid=76814313&single=true&output=csv";
+
+    const grid = document.getElementById("grid");
+    let noDisponibles = new Set();
+
+    function formatoNumero(n) {
+      return String(n).padStart(2, "0");
+    }
+
+    function crearCuadricula() {
+      grid.innerHTML = "";
+
+      for (let i = 0; i <= 99; i++) {
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "numero";
+        boton.textContent = formatoNumero(i);
+        boton.dataset.numero = i;
+
+        boton.addEventListener("click", () => {
+          if (noDisponibles.has(i)) {
+            noDisponibles.delete(i);
+          } else {
+            noDisponibles.add(i);
+          }
+
+          pintarCuadricula();
+        });
+
+        grid.appendChild(boton);
+      }
+
+      pintarCuadricula();
+    }
+
+    function pintarCuadricula() {
+      document.querySelectorAll(".numero").forEach((boton) => {
+        const numero = parseInt(boton.dataset.numero, 10);
+        boton.classList.toggle("no-disponible", noDisponibles.has(numero));
+      });
+    }
+
+    function leerNoDisponiblesDesdeCSV(texto) {
+      const resultado = new Set();
+      const lineas = texto.split(/\r?\n/);
+
+      for (const lineaOriginal of lineas) {
+        const linea = lineaOriginal.trim();
+        if (!linea) continue;
+
+        const normalizada = linea
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, " ");
+
+        if (!normalizada.includes("no disponible")) continue;
+
+        const numeroEncontrado = linea.match(/\b(\d{1,2})\b/);
+        if (!numeroEncontrado) continue;
+
+        const numero = parseInt(numeroEncontrado[1], 10);
+        if (numero >= 0 && numero <= 99) {
+          resultado.add(numero);
+        }
+      }
+
+      return resultado;
+    }
+
+    async function cargarDesdeGoogleSheet() {
+      try {
+        const separador = SHEET_CSV_URL.includes("?") ? "&" : "?";
+        const respuesta = await fetch(SHEET_CSV_URL + separador + "cache=" + Date.now(), {
+          cache: "no-store"
+        });
+
+        const texto = await respuesta.text();
+        noDisponibles = leerNoDisponiblesDesdeCSV(texto);
+        pintarCuadricula();
+      } catch (error) {
+        console.error("No se pudo cargar Google Sheets:", error);
+      }
+    }
+
+    crearCuadricula();
+    cargarDesdeGoogleSheet();
+  </script>
+</body>
+</html>
